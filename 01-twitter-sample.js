@@ -10,7 +10,7 @@ var Twit   = require('twit'),           // Twitter API Client
 // Configure the Twit object with the application credentials
 var T = new Twit(config);
 
-// Subscribe to the stream sample, for tweets in english
+// Subscribe to the sample stream and begin listening
 var stream = T.stream('statuses/sample');
 
 // The callback will be invoked on each tweet. Here, we print the username
@@ -28,6 +28,11 @@ stream.on('connect', function(msg) {
 // The 'connected' event is triggered when the connection is successful.
 stream.on('connected', function(msg) {
     console.log('connected');
+});
+
+// The 'reconnect' event is triggered when a reconnection is scheduled.
+stream.on('reconnect', function(req, res, interval) {
+    console.log('Reconnecting in ' + (interval / 3) + ' seconds.');
 });
 
 // The 'warning' event is triggered if the client is not processing the
