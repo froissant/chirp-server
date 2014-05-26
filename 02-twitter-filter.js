@@ -5,9 +5,10 @@
 var Twit   = require('twit'),           // Twitter API Client
     config = require('./config.json');  // Twitter Credentials
 
-// Create a Twitter c
+// Configure the Twit object with the application credentials
 var T = new Twit(config);
 
+// List of topics to track
 var topics = [
     'coffee',
     'tea',
@@ -20,7 +21,7 @@ var stream = T.stream('statuses/filter', {track: topics});
 // The callback will be invoked on each tweet. Here, we print the username
 // and the text of the tweet in the screen.
 stream.on('tweet', function(tweet) {
-    console.log('@' + tweet.user.screen_name + ': ' + tweet.text.slice(0, 50) + '...');
+    console.log('@' + tweet.user.screen_name + ': ' + tweet.text);
 });
 
 // The 'connect' callback is invoked when the Twitter API Client

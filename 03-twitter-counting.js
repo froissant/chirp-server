@@ -5,7 +5,7 @@
 var Twit   = require('twit'),           // Twitter API Client
     config = require('./config.json');  // Twitter Credentials
 
-// Create a Twitter c
+// Configure the Twit object with the application credentials
 var T = new Twit(config);
 
 var topics = [

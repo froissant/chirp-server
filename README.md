@@ -14,4 +14,4 @@ The dependencies on this project can be installed from the command line by typin
 
 - [1. Twitter Sample](01-twitter-sample.js)
 - [2. Twitter Filtering](02-twitter-filter.js)
-- [3. Twitter Tracking](03-twitter-tracking.js)
+- [3. Twitter Counting](03-twitter-counting.js)
