@@ -23,19 +23,15 @@ var stream = T.stream('statuses/filter', {track: words});
 // and the text of the tweet in the screen.
 stream.on('tweet', function(tweet) {
 
-    // Find the to
+    // Find the topic in the tweet body
     topics.forEach(function(topic) {
 
         if (tweet.text.toLowerCase().indexOf(topic.word) > 0) {
             topic.count += 1;
+
+            console.log(topic.word + ': ' + topic.count);
         }
-
-        var spaces = Array(15 - topic.word.length).join(' ');
-
-        process.stdout.write(topic.word + ': ' + spaces + Array(topic.count).join('=') + '\r');
     });
-
-    console.log('\n');
 
 });
 
