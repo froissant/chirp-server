@@ -19,8 +19,9 @@
     "url": "https://github.com/pnavarrc/chirp-server/issues"
   },
   "homepage": "https://github.com/pnavarrc/chirp-server",
-  "devDependencies": {
-    "socket.io": "^0.9.17",
+  "dependencies": {
+    "express": "^4.3.2",
+    "socket.io": "^1.0.2",
     "twit": "^1.1.15"
   }
 }
