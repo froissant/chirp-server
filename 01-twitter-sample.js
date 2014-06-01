@@ -32,7 +32,7 @@ stream.on('connected', function(msg) {
 
 // The 'reconnect' event is triggered when a reconnection is scheduled.
 stream.on('reconnect', function(req, res, interval) {
-    console.log('Reconnecting in ' + (interval / 3) + ' seconds.');
+    console.log('Reconnecting in ' + (interval / 1e3) + ' seconds.');
 });
 
 // The 'warning' event is triggered if the client is not processing the
