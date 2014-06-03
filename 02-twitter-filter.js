@@ -2,18 +2,14 @@
 //
 
 // Import the Node modules
-var Twit   = require('twit'),           // Twitter API Client
-    config = require('./config.json');  // Twitter Credentials
+var Twit   = require('twit'),         // Twitter API Client
+    config = require('./config.js');  // Twitter Credentials
 
 // Configure the Twit object with the application credentials
 var T = new Twit(config);
 
 // List of topics to track
-var topics = [
-    'coffee',
-    'tea',
-    'cocoa'
-];
+var topics = ['good morning', 'breakfast'];
 
 // Subscribe to the stream sample, for tweets in english
 var stream = T.stream('statuses/filter', {track: topics});

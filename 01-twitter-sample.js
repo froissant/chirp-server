@@ -4,8 +4,8 @@
 // sample of the statuses in real time.
 
 // Import node modules
-var Twit   = require('twit'),           // Twitter API Client
-    config = require('./config.json');  // Twitter Credentials
+var Twit   = require('twit'),         // Twitter API Client
+    config = require('./config.js');  // Twitter Credentials
 
 // Configure the Twit object with the application credentials
 var T = new Twit(config);
@@ -16,8 +16,14 @@ var stream = T.stream('statuses/sample');
 // The callback will be invoked on each tweet. Here, we print the username
 // and the text of the tweet in the screen.
 stream.on('tweet', function(tweet) {
-    console.log('[@' + tweet.user.screen_name + ']: ' + tweet.text);
+    // console.log('[@' + tweet.user.screen_name + ']: ' + tweet.text);
+    if (tweet.coordinates) {
+        console.log(tweet);
+    }
 });
+
+
+
 
 // The 'connect' callback is invoked when the Twitter API Client
 // tries to connect to Twitter.
@@ -32,7 +38,7 @@ stream.on('connected', function(msg) {
 
 // The 'reconnect' event is triggered when a reconnection is scheduled.
 stream.on('reconnect', function(req, res, interval) {
-    console.log('Reconnecting in ' + (interval / 3) + ' seconds.');
+    console.log('Reconnecting in ' + (interval / 1e3) + ' seconds.');
 });
 
 // The 'warning' event is triggered if the client is not processing the

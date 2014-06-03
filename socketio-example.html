@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>Socket.IO Example</title>
+
+    <!-- Socket.IO serves the client-side library  -->
+    <script src="http://localhost:7000/socket.io/socket.io.js"></script>
+  </head>
+
+  <body>
+
+    <h1>Socket.IO Example</h1>
+
+  <script>
+    var socket = io('http://localhost:7000');
+
+    // If the client receives the `custom-event`, it will invoke the
+    // callback.
+    socket.on('custom-event', function(data) {
+        console.log(data);
+        socket.emit('other-event', {msg: 'message received on the server.'});
+    });
+  </script>
+
+  </body>
+</html>
