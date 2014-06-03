@@ -14,7 +14,7 @@ var io = new IOServer(9720);
 
 // List of topics to listen.
 var topics = [
-    {word: 'morning', client: 'server'},
+    {word: 'morning', client: 'server'}
 ];
 
 function words() {
@@ -26,8 +26,6 @@ function words() {
 var stream = T.stream('statuses/filter', {track: words()});
 
 function emitTweet(tweet) {
-
-    console.log('.');
 
     // Process only geotagged tweets.
     if (tweet.coordinates) {
@@ -46,8 +44,6 @@ function emitTweet(tweet) {
                         coordinates: tweet.coordinates,
                         id: tweet.id
                     });
-
-                    console.log('Tweet sent.');
                 }
 
             }

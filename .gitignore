@@ -25,4 +25,4 @@ build/Release
 node_modules
 
 # Prevent to adding the author credentials to git.
-config.json
+config.js

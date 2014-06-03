@@ -1,5 +1,5 @@
 // Socket.IO Example
-//
+// -----------------
 
 var socketio = require('socket.io'),
     io = socketio.listen(7000);
