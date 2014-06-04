@@ -10,13 +10,11 @@ io.sockets.on('connection', function (socket) {
     // Print the socket ID on connection
     console.log('Socket ' + socket.id + ' connected.');
 
-    // The server push messages to the clients
-    socket.emit('custom-event', {msg: 'message received on the client.'});
-
     // The server will invoke the callback when a client
     // emits the event `other-event`.
-    socket.on('other-event', function (data) {
+    socket.on('client-message', function (data) {
         console.log(data);
+        socket.emit('server-message', {msg: 'Message "' + data.msg + '" received.'});
     });
 
     // Execute the callback if the client disconnects.

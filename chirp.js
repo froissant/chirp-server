@@ -2,9 +2,9 @@
 // ------------
 
 // Import the Node modules
-var Twit     = require('twit'),           // Twitter API Client
-    IOServer = require('socket.io'),      // Client-side communication
-    config   = require('./config.json');  // Twitter Credentials
+var Twit     = require('twit'),         // Twitter API Client
+    IOServer = require('socket.io'),    // Client-side communication
+    config   = require('./config.js');  // Twitter Credentials
 
 // Configure the Twit object with the application credentials
 var T = new Twit(config);

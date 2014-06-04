@@ -2,8 +2,8 @@
 //
 
 // Import the Node modules
-var Twit   = require('twit'),         // Twitter API Client
-    config = require('./config.js');  // Twitter Credentials
+var Twit   = require('twit'),              // Twitter API Client
+    config = require('./credentials.js');  // Twitter Credentials
 
 // Configure the Twit object with the application credentials
 var T = new Twit(config);

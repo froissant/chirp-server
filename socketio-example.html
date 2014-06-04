@@ -4,15 +4,50 @@
   <head>
     <title>Socket.IO Example</title>
 
+    <link rel="stylesheet" href="assets/css/bootstrap.css">
+
     <!-- Socket.IO serves the client-side library  -->
     <script src="http://localhost:7000/socket.io/socket.io.js"></script>
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/bootstrap.js"></script>
+    <script src="assets/js/d3.js" charset="utf8"></script>
   </head>
 
   <body>
 
-    <h1>Socket.IO Example</h1>
+    <div class="container">
+
+      <h1>Socket.IO Example</h1>
+
+        <div class="form-group">
+          <label class="sr-only" for="message">New Topic</label>
+          <input type="text" id="message" class="form-control input-sm"
+            placeholder="send a message to the server">
+        </div>
+
+        <ul id='msg-list' class='list-unstyled'>
+        </ul>
+
+    </div>
+
 
   <script>
+
+    var ENTER_KEY = 13
+        messages = [],
+        dateFmt = d3.time.format('[%H:%M:%S]');
+
+    function updateMessages() {
+
+        var items = d3.select('#msg-list')
+            .selectAll('li').data(messages);
+
+        items.enter().append('li');
+
+        items
+            .html(function(d) { return dateFmt(d.date) + ' ' + d.from + ': ' + d.msg; });
+    }
+
     var socket = io('http://localhost:7000');
 
     // If the client receives the `custom-event`, it will invoke the
@@ -21,6 +56,31 @@
         console.log(data);
         socket.emit('other-event', {msg: 'message received on the server.'});
     });
+
+    $('#message').keypress(function(e) {
+
+      if (e.which !== ENTER_KEY) {
+        return;
+      }
+
+      var message = $(this).val().trim();
+
+      if (message.length > 0) {
+        socket.emit('client-message', {msg: message});
+        messages.push({from: 'client', date: new Date(), msg: message});
+
+        updateMessages();
+      }
+
+      // Cleans the input area
+      $(this).val('');
+    });
+
+    socket.on('server-message', function(data) {
+      messages.push({from: 'server', date: new Date(), msg: data.msg});
+      updateMessages();
+    });
+
   </script>
 
   </body>
