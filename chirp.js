@@ -6,14 +6,14 @@ var Twit     = require('twit'),         // Twitter API Client
     IOServer = require('socket.io'),    // Client-side communication
     config   = require('./config.js');  // Twitter Credentials
 
+// List of topics to track
+var topics = [];
 
 // Configure the Twit object with the application credentials
 var T = new Twit(config),
     twitterStream = null;
 
-// List of topics to listen.
-var topics = [];
-
+// Retrieve the given attribute for all the element in the list
 function pluck(list, attribute) {
     return list.map(function(item) { return item[attribute]; });
 }
@@ -120,6 +120,7 @@ io.on('connection', function(socket) {
 
     // If the client disconnects, we remove its topics from the list
     socket.on('disconnect', function() {
+        console.log('Client ' + socket.id + ' disconnected.');
         topics = topics.filter(function(topic) {
             return topic.socket.id !== socket.id;
         });
