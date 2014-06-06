@@ -9,17 +9,13 @@ var Twit     = require('twit'),         // Twitter API Client
 // List of topics to track
 var topics = [];
 
-// Configure the Twit object with the application credentials
-var T = new Twit(config),
-    twitterStream = null;
+// Twitter Streaming Connection
+// ----------------------------
 
-// Retrieve the given attribute for all the element in the list
-function pluck(list, attribute) {
-    return list.map(function(item) { return item[attribute]; });
-}
+// Configure the Twit object with the application credentials
+var T = new Twit(config);
 
 // Callbacks for Twit Stream Events
-// --------------------------------
 
 // Connection attempt (`connect` event)
 function twitOnConnect(req) {
@@ -76,6 +72,17 @@ function twitOnTweet(tweet) {
     }
 }
 
+// Creates a new stream object, tracking the updated topic list
+var twitterStream = T.stream('statuses/sample');
+
+// Add listeners for the stream events to the new stream instance
+twitterStream.on('tweet',      twitOnTweet);
+twitterStream.on('connect',    twitOnConnect);
+twitterStream.on('connected',  twitOnConnected);
+twitterStream.on('reconnect',  twitOnReconnect);
+twitterStream.on('limit',      twitOnLimit);
+twitterStream.on('disconnect', twitOnDisconnect);
+
 
 // Client Side Communication
 // -------------------------
@@ -86,7 +93,6 @@ var port = 9720,
 
 console.log('Listening for incomming connections in port ' + port);
 
-
 // A clients established a connection with the server
 io.on('connection', function(socket) {
 
@@ -94,28 +100,10 @@ io.on('connection', function(socket) {
     console.log('Client ', socket.id, ' connected.');
 
     socket.on('add', function(topic) {
-
         // Adds the new topic to the topic list
         topics.push({word: topic.word.toLowerCase(), socket: socket});
 
         console.log('Adding the topic "' + topic.word + '"');
-        console.log('Updated topic list: "' + pluck(topics, 'word') + '"');
-
-        // Stop the stream to include additional topics
-        if (twitterStream) {
-            twitterStream.stop();
-        }
-
-        // Creates a new stream object, tracking the updated topic list
-        twitterStream = T.stream('statuses/filter', {track: pluck(topics, 'word')});
-
-        // Add listeners for the stream events to the new stream instance
-        twitterStream.on('tweet',      twitOnTweet);
-        twitterStream.on('connect',    twitOnConnect);
-        twitterStream.on('connected',  twitOnConnected);
-        twitterStream.on('reconnect',  twitOnReconnect);
-        twitterStream.on('limit',      twitOnLimit);
-        twitterStream.on('disconnect', twitOnDisconnect);
     });
 
     // If the client disconnects, we remove its topics from the list
