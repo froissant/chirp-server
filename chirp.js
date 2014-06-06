@@ -6,104 +6,110 @@ var Twit     = require('twit'),         // Twitter API Client
     IOServer = require('socket.io'),    // Client-side communication
     config   = require('./config.js');  // Twitter Credentials
 
-// Configure the Twit object with the application credentials
-var T = new Twit(config);
 
-// Create a new instance of the Socket.IO Server
-var io = new IOServer(9720);
+// Configure the Twit object with the application credentials
+var T = new Twit(config),
+    twitterStream = null;
 
 // List of topics to listen.
-var topics = [
-    {word: 'morning', client: 'server'}
-];
+var topics = [];
 
-function words() {
-    return topics.map(function(d) { return d.word; });
+function pluck(list, attribute) {
+    return list.map(function(item) { return item[attribute]; });
 }
 
-// Initializes the twitter filter stream, tracking the words in the
-// topic list.
-var stream = T.stream('statuses/filter', {track: words()});
+// Twitter Streaming Callbacks
+// ---------------------------
 
-function emitTweet(tweet) {
+function twitterOnConnect(req) {
+    console.log('[Twitter] Connecting...');
+}
 
-    // Process only geotagged tweets.
+function twitterOnConnected(res) {
+    console.log('[Twitter] Connection successful.');
+}
+
+function twitterOnReconnect(req, res, interval) {
+    var secs = Math.round(interval / 1e3);
+    console.log('[Twitter] Disconnected. Reconnection scheduled in ' + secs + ' seconds.');
+}
+
+function twitterOnDisconnect(disconnectMessage) {
+    console.log('[Twitter] Disconnected.');
+}
+
+function twitterOnLimit(limitMessage) {
+    console.log('[Twitter] Limit message received. Stopping.');
+    twitterStream.stop();
+}
+
+function twitterOnTweet(tweet) {
+
+    // Process only geotagged tweets
     if (tweet.coordinates) {
 
-        // Check if any of the topics is mentioned on the tweet
+        // Convert the tweet text to lowercase to find the topics
+        var tweetText = tweet.text.toLowerCase();
+
+        // Check if the
         topics.forEach(function(topic) {
 
-            // Check if the topic is contained in the tweet text
-            if (tweet.text.toLowerCase().indexOf(topic.word) > 0) {
+            // Checks if the tweet text contains the topic
+            if (tweetText.indexOf(topic.word) !== -1) {
 
-                var clientSocket = io.of('/').connected[topic.client];
-
-                if (clientSocket) {
-                    clientSocket.volatile.emit('tweet', {
-                        word: topic.word,
-                        coordinates: tweet.coordinates,
-                        id: tweet.id
-                    });
-                }
-
+                // Sends a simplified version of the tweet to the client
+                topic.socket.emit('tweet', {
+                    id: tweet.id,
+                    coordinates: tweet.coordinates,
+                    word: topic.word
+                });
             }
-
         });
     }
 }
 
-stream.on('tweet', emitTweet);
 
+// Client Side Communication
+// -------------------------
+
+// Create a new instance of the Socket.IO Server
+var io = new IOServer(9720);
+
+
+// A clients established a connection with the server
 io.on('connection', function(socket) {
 
-    console.log('client', socket.id, 'connected.');
+    // Displays a message in the console when a client connects
+    console.log('Client ', socket.id, ' connected.');
 
     socket.on('add', function(topic) {
 
-        // Adds a new topic to the list.
-        topics.push({word: topic.word, client: socket.id});
+        // Adds the new topic to the topic list
+        topics.push({word: topic.word.toLowerCase(), socket: socket});
 
-        // Resets the Twitter stream
-        stream.stop();
-        stream = T.stream('statuses/filter', {track: words()});
+        console.log('Adding the topic "' + topic.word + '"');
+        console.log('Updated topic list: "' + pluck(topics, 'word') + '"');
 
-        // Binds the tweet event of the new stream to the emitTweet callback
-        stream.on('tweet', emitTweet);
+        // Stop the stream to include the additional topics
+        if (twitterStream) {
+            twitterStream.stop();
+        }
 
-        stream.on('limit', function (limitMessage) {
-            console.log('Twitter Limit', limitMessage);
-        });
+        // Creates a new stream object, tracking the updated topic list
+        twitterStream = T.stream('statuses/filter', {track: pluck(topics, 'word')});
 
-        stream.on('disconnect', function (disconnectMessage) {
-            console.log('Twitter Disconnect', disconnectMessage);
-        });
-
-        stream.on('connect', function (request) {
-            console.log('Twitter Connect');
-        });
-
-        stream.on('connected', function (request) {
-            console.log('Twitter Connected');
-        });
-
-        console.log('Updated topic list:', words());
-        console.log(topics);
+        twitterStream.on('tweet',      twitterOnTweet);
+        twitterStream.on('connect',    twitterOnConnect);
+        twitterStream.on('connected',  twitterOnConnected);
+        twitterStream.on('reconnect',  twitterOnReconnect);
+        twitterStream.on('limit',      twitterOnLimit);
+        twitterStream.on('disconnect', twitterOnDisconnect);
     });
 
     socket.on('disconnect', function() {
-
-        // Remove the client topics from the list. This will be effective
-        // the next time the Twitter stream is started.
+        // Remove the topics of the disconnected client
         topics = topics.filter(function(topic) {
-            return (topic.client !== socket.id);
+            return topic.socket.id !== socket.id;
         });
-
     });
-
 });
-
-// Twitter Stream Events
-
-
-
-
