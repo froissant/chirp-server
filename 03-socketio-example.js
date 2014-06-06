@@ -1,22 +1,24 @@
 // Socket.IO Example
 // -----------------
 
-var socketio = require('socket.io'),
-    io = socketio.listen(7000);
 
-// Listen for the `connection` event for incoming sockets.
-io.sockets.on('connection', function (socket) {
+// Import the Socket.IO module
+var IOServer = require('socket.io');
+
+// Start the server, listening on the port 7000
+var io = new IOServer(7000);
+
+
+// Listen for connections from incoming sockets
+io.on('connection', function (socket) {
 
     // Print the socket ID on connection
-    console.log('Socket ' + socket.id + ' connected.');
+    console.log('Client ID ' + socket.id + ' connected.');
 
-    // The server push messages to the clients
-    socket.emit('custom-event', {msg: 'message received on the client.'});
-
-    // The server will invoke the callback when a client
-    // emits the event `other-event`.
-    socket.on('other-event', function (data) {
+    // The server will emit a message when receiving the `client-message` event.
+    socket.on('client-message', function (data) {
         console.log(data);
+        socket.emit('server-message', {msg: 'Message "' + data.msg + '" received.'});
     });
 
     // Execute the callback if the client disconnects.
