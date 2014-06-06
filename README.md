@@ -1,6 +1,6 @@
 # Chirp Server
 
-Twitter Streaming Server
+_Twitter Streaming Server_ - Example for the book _Mastering D3.js_
 
 ## Installing
 
@@ -12,6 +12,14 @@ The dependencies on this project can be installed from the command line by typin
 
 ## Examples
 
+To run the examples, execute the corresponding module in the terminal
+
+    $ node 01-twitter-sample.js
+
+The third example requires to open the `socketio-example.html` with the browser.
+
 - [1. Twitter Sample](01-twitter-sample.js)
 - [2. Twitter Filtering](02-twitter-filter.js)
-- [3. Twitter Counting](03-twitter-counting.js)
+- 3. Socket.IO Example
+    - [Server](03-socketio-example.js)
+    - [Client](socketio-example.html)
