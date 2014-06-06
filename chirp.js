@@ -15,6 +15,9 @@ var topics = [];
 // Configure the Twit object with the application credentials
 var T = new Twit(config);
 
+// Creates a new stream object, tracking the updated topic list
+var twitterStream = T.stream('statuses/sample');
+
 // Callbacks for Twit Stream Events
 
 // Connection attempt (`connect` event)
@@ -72,9 +75,6 @@ function twitOnTweet(tweet) {
     }
 }
 
-// Creates a new stream object, tracking the updated topic list
-var twitterStream = T.stream('statuses/sample');
-
 // Add listeners for the stream events to the new stream instance
 twitterStream.on('tweet',      twitOnTweet);
 twitterStream.on('connect',    twitOnConnect);
@@ -91,14 +91,16 @@ twitterStream.on('disconnect', twitOnDisconnect);
 var port = 9720,
     io = new IOServer(port);
 
-console.log('Listening for incomming connections in port ' + port);
+// Displays a message at startup
+console.log('Listening for incoming connections in port ' + port);
 
 // A clients established a connection with the server
 io.on('connection', function(socket) {
 
     // Displays a message in the console when a client connects
-    console.log('Client ', socket.id, ' connected.');
+    console.log('Client', socket.id, 'connected.');
 
+    // The client adds a new topic
     socket.on('add', function(topic) {
         // Adds the new topic to the topic list
         topics.push({word: topic.word.toLowerCase(), socket: socket});
