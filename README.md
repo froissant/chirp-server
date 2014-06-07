@@ -1,6 +1,6 @@
 # Chirp Server
 
-_Twitter Streaming Server_ - Example for the book _Mastering D3.js_
+Twitter Streaming Server. Example for the book _Mastering D3.js_.
 
 ## Installing
 
@@ -8,11 +8,11 @@ To run the code in this repository, you will need Node, [Twit](https://github.co
 
 The dependencies on this project can be installed from the command line by typing:
 
-    npm install
+    $ npm install
 
 ## Examples
 
-To run the examples, execute the corresponding module in the terminal
+To run the examples, execute the corresponding script in the terminal:
 
     $ node 01-twitter-sample.js
 
