@@ -15,8 +15,11 @@ var topics = [];
 // Configure the Twit object with the application credentials
 var T = new Twit(config);
 
+// Filter by location (the world) and tweets in english
+var filterOptions = {locations: '-180,-90,180,90', language: 'en'};
+
 // Creates a new stream object, tracking the updated topic list
-var twitterStream = T.stream('statuses/sample');
+var twitterStream = T.stream('statuses/filter', filterOptions);
 
 // Callbacks for Twit Stream Events
 
