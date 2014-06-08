@@ -10,16 +10,22 @@ The dependencies on this project can be installed from the command line by typin
 
     $ npm install
 
+## Running the Streaming Server
+
+Update the `chirp.js` file to use your credentials (be sure to keep the credentials secret) and run the streaming server:
+
+    $ node chirp.js
+
+The server will connect to the `statuses/filter` endpoint and begin listening the port 9720 for socket.io connections.
+
 ## Examples
 
-To run the examples, execute the corresponding script in the terminal:
+There are examples of using the Twitter Streaming API and the Socket.IO library. To run the examples, execute the corresponding script in the terminal:
 
     $ node 01-twitter-sample.js
 
 The third example requires to open the `socketio-example.html` with the browser.
 
-- [1. Twitter Sample](01-twitter-sample.js)
-- [2. Twitter Filtering](02-twitter-filter.js)
-- 3. Socket.IO Example
-    - [Server](03-socketio-example.js)
-    - [Client](socketio-example.html)
+- [1. Twitter Sample.](01-twitter-sample.js)
+- [2. Twitter Filtering.](02-twitter-filter.js)
+- 3. Socket.IO Example [server](03-socketio-example.js) and [client.](socketio-example.html)
