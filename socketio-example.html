@@ -30,11 +30,15 @@
       <h1>Socket.IO Example</h1>
 
         <!-- Input element to send messages -->
-        <div class="form-group">
-          <label class="sr-only" for="message">New Topic</label>
-          <input type="text" id="message" class="form-control input-sm"
-            placeholder="send a message to the server">
-        </div>
+        <form role="form" class="form-horizontal" id="msg-form">
+            <div class="form-group">
+                <label for="msgToServer" class="col-sm-1">Message</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control input-sm" id="msgToServer" placeholder="Send a message to the server.">
+                </div>
+                <button type="submit" class="btn btn-default btn-sm">Send</button>
+            </div>
+        </form>
 
         <!-- List with messages -->
         <ul id='msg-list' class='list-unstyled'>
@@ -49,8 +53,7 @@
     var socket = io('http://localhost:7000');
 
     // Declare variables for the message list and the time formatter
-    var ENTER_KEY = 13
-        messages = [],
+    var messages = [],
         dateFmt = d3.time.format('[%H:%M:%S]');
 
     // Update the message list
@@ -76,22 +79,13 @@
             });
     }
 
-    d3.select('#message').on('keypress', function() {
+    d3.select('#msg-form').on('submit', function() {
 
-        // Retrieve the current event (keypress)
-        var e = d3.event;
-
-        // Check if the user hits the Enter key
-        if (e.which !== ENTER_KEY) {
-            return;
-        }
-
-        // Retrieve the content of the input element and remove whitespaces
-        var message = this.value.trim();
+        var inputElement = d3.select('#message').node(),
+            message = inputElement.value.trim();
 
         // Check that the message is not empty
-        if (message.length > 0) {
-
+        if (message) {
             // Sends the message to the server
             socket.emit('client-message', {msg: message});
 
@@ -100,10 +94,12 @@
 
             // Update the list of messages (DOM)
             updateMessages();
+
+            // Resets the form, clearing the input element
+            this.reset();
         }
 
-        // Cleans the input element
-        this.value = '';
+        d3.event.preventDefault();
     });
 
     socket.on('server-message', function(data) {
