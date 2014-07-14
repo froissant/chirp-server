@@ -55,27 +55,28 @@ function twitOnLimit(limitMessage) {
 // A tweet is received (`tweet` event)
 function twitOnTweet(tweet) {
 
-    // Process only geotagged tweets
-    if (tweet.coordinates) {
-
-        // Convert the tweet text to lowercase to find the topics
-        var tweetText = tweet.text.toLowerCase();
-
-        // Check if any of the topics is contained in the tweet text
-        topics.forEach(function(topic) {
-
-            // Checks if the tweet text contains the topic
-            if (tweetText.indexOf(topic.word) !== -1) {
-
-                // Sends a simplified version of the tweet to the client
-                topic.socket.emit('tweet', {
-                    id: tweet.id,
-                    coordinates: tweet.coordinates,
-                    word: topic.word
-                });
-            }
-        });
+    // Exits if the tweet doesn't have geographic coordinates
+    if (!tweet.coordinates) {
+        return;
     }
+
+    // Convert the tweet text to lowercase to find the topics
+    var tweetText = tweet.text.toLowerCase();
+
+    // Check if any of the topics is contained in the tweet text
+    topics.forEach(function(topic) {
+
+        // Checks if the tweet text contains the topic
+        if (tweetText.indexOf(topic.word) !== -1) {
+
+            // Sends a simplified version of the tweet to the client
+            topic.socket.emit('tweet', {
+                id: tweet.id,
+                coordinates: tweet.coordinates,
+                word: topic.word
+            });
+        }
+    });
 }
 
 // Add listeners for the stream events to the new stream instance
