@@ -81,7 +81,7 @@
 
     d3.select('#msg-form').on('submit', function() {
 
-        var inputElement = d3.select('#message').node(),
+        var inputElement = d3.select('#msgToServer').node(),
             message = inputElement.value.trim();
 
         // Check that the message is not empty
